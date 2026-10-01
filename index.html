@@ -47,8 +47,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn:active{transform:scale(0.97)}
 .btn-new{background:var(--gold);color:#111}
 .btn-new:hover{background:#E5B94A}
-.btn-undo{background:var(--surface);color:var(--txt);border:1px solid rgba(255,255,255,0.1)}
-.light .btn-undo{border:1px solid rgba(0,0,0,0.1)}
 
 /* GRID */
 .grid-wrap{width:100%;max-width:480px;padding:0 16px}
@@ -164,7 +162,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- CONTROLS -->
 <div class="controls">
   <button class="btn btn-new" onclick="newGame()">🔄 New Game</button>
-  <button class="btn btn-undo" onclick="undo()">↩ Undo</button>
 </div>
 
 <!-- GRID -->
@@ -189,7 +186,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <!-- SHARE + COFFEE -->
 <div class="bottom-actions">
-  <button class="btn btn-share" onclick="shareGame()">🔗 Share Score</button>
+  <button class="btn btn-share" onclick="shareGame()">🔗 Share</button>
   <button class="btn btn-coffee" onclick="buyCoffee()">☕ Buy Me a Coffee</button>
 </div>
 
@@ -249,6 +246,8 @@ function slide(row){
     if(arr[i]===arr[i+1]){
       arr[i]*=2; score+=arr[i];
       if(arr[i]===2048&&!won){won=true;}
+      const curMax=Math.max(...board.flat());
+      if(arr[i]>=curMax){confetti(14);}
       arr.splice(i+1,1); i++;
     }
   }
@@ -411,14 +410,11 @@ function updateThemeBtn(){
 // ── SHARE ──────────────────────────────────────────────────────────
 function shareGame(){
   const highest=Math.max(...board.flat());
-  const text=`🎮 I just scored ${score.toLocaleString()} in 2048 and reached the ${highest} tile!\n\nPlay free at: https://palmergeorge51-art.github.io/2048\n\n`;
+  const text=`🎮 I just scored ${score.toLocaleString()} in 2048 and reached the ${highest} tile!\n\nPlay free at: https://palmergeorge51-art.github.io/2048`;
   if(navigator.share){
-    navigator.share({title:'2048 Game',text,url:'https://palmergeorge51-art.github.io/2048'})
-      .catch(()=>{});
+    navigator.share({title:'2048',text,url:'https://palmergeorge51-art.github.io/2048'}).catch(()=>{});
   } else {
-    navigator.clipboard.writeText(text).then(()=>toast('Caption copied! Paste anywhere to share 🔗')).catch(()=>{
-      toast('Share: Score '+score.toLocaleString()+' | Tile '+highest);
-    });
+    navigator.clipboard.writeText(text).then(()=>toast('Caption copied! Paste anywhere 🔗')).catch(()=>toast('Score: '+score.toLocaleString()));
   }
 }
 
